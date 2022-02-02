@@ -6,7 +6,6 @@ def generate_days(df: pandas.DataFrame):
     return df.assign(days=(df['date'] - df['date'].iloc[0]).dt.days.astype(np.int64))
 
 
-
 def generate_distance(df: pandas.DataFrame):
     return df.assign(d=np.sqrt(df[['X', 'Y', 'Z']].pow(2).sum(axis=1)))
 

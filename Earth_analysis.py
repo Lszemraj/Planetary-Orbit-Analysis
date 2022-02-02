@@ -20,6 +20,7 @@ days = generate_days(earth)
 distance = generate_distance(days)
 velocity = generate_velocity(distance)
 e = generate_eccentricity(velocity)
+
 print("Eccentricity:", e)
 
 #data = {"Days": days, "Distance (Au)": distance, "Velocity (Au/Day)": velocity}
