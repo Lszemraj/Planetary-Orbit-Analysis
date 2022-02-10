@@ -76,10 +76,6 @@ fig3.update_layout(
 
 #check if elliptical, I will look at X-Y projection
 
-x_max = np.amin(df['X'])
-x_min = np.amax(df['X'])
-y_max = np.amin(df['Y'])
-y_min = np.amax(df["Y"])
 
 
 

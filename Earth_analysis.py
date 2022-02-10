@@ -57,9 +57,10 @@ fig_d_t = px.scatter(df, x = df["days"], y = df["d"],
 #fig_d_t.show()
 
 #3D Plot
-
+ecc = generate_eccentricity(df)
+a = generate_semimajor_axis(df)
 fig = px.scatter_3d(df, x='X', y='Y', z='Z', color = 'v' )
-dict = {"X": [0], 'Y': [0], 'Z':[0]} #Sun at Center
+dict = {"X": a*ecc , 'Y': [0], 'Z':[0]} #Sun at Center
 df2 = pd.DataFrame(dict)
 fig2 = px.scatter_3d(df2, x='X', y='Y', z='Z')
 fig3 = go.Figure(data=fig.data + fig2.data)
@@ -69,12 +70,11 @@ fig = go.Figure()
 fig.add_trace(go.Scatter(x = df['X'], y= df['Y'], mode = 'markers', name = 'Scatter Points'))
 fig.add_trace(go.Trace(x=df['X'], y=df['Y'], name = 'Line of Best Fit'))
 fig.add_trace(go.Scatter(x = df2['X'], y= df2['Y'], name = 'Sun', mode = 'markers+text', text = ['The Sun'], textposition= 'top center'))
+
 #Find Equation of ellipse projection on X-Y plane
-
-
-dat = find_elliptical_equation(df['X'], df['Y'])
+dat = find_elliptical_equation(df, df['X'], -160000000, 153000000)
 fig.add_trace(go.Trace(x=dat['x_ranges'], y=dat['y_ranges'], name = 'Equation of Ellipse'))
-
+fig.add_trace(go.Trace(x=dat['x_ranges'], y=dat['negative_y_ranges'], name = 'Equation of Ellipse Negative Side'))
 fig.update_layout(title = f'Plot of X-Y plane of orbit of {planet}', showlegend=True)
 #ellipse = go.Figure(data = fig_scatter.data + fig_line.data + fig_equation.data)
 
@@ -87,6 +87,19 @@ fig3.update_layout(
     yaxis_title="Y (AU)",
     legend_title= "Velocity",
 )
+
+#check period relationship
+
+best_fit_data = fit_sin(df['days'], df['d'])
+#best_fit_dat = pd.DataFrame(data = best_fit_data)
+print(best_fit_data)
+T = best_fit_data['period'][0]
+semi = generate_semimajor_axis(df)
+#print(f"Period of {planet}", T)
+
+
+
+
 
 
 #fig3.show()

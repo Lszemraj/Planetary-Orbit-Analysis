@@ -87,10 +87,10 @@ def observer_table_to_dataframe(filename):
     return df
 
 # courtesy of stack overflow: https://stackoverflow.com/a/42322656
-# i understand fourier transforms bc of 3b1b but this is blasphemy at its finest
+
 def fit_sin(time, data):
-    time = np.array(time)
-    data = np.array(data)
+    #time = np.array(time)
+    #data = np.array(data)
     sampling_frequencies = np.fft.fftfreq(len(time), (time[1] - time[0]))
     Fyy = abs(np.fft.fft(data))
     #excluding the zero frequency "peak", which is related to offset
@@ -105,13 +105,19 @@ def fit_sin(time, data):
     f = omega / (2. * np.pi)
     def fitfunc(t):
         return amp * np.sin(omega * t + p) + c
-    return {"amp": amp, "omega": omega, "phase": p, "offset": c, "freq": f, "period": 1. / f, "fitfunc": fitfunc}
+    dat = {"amp": amp, "omega": omega, "phase": p, "offset": c, "freq": f, "period": 1. / f, "fitfunc": fitfunc}
+    df = pd.DataFrame(dat)
+    return df
 
-def find_elliptical_equation(val1, val2):
-    b = np.amax(val1)
-    a = np.amax(val2)
-    xi = np.linspace(-b, b)
-    yi = np.sqrt((a**2)*(1-((xi**2)/b**2)))
-    dat = {'x_ranges': xi, 'y_ranges': yi}
+def find_elliptical_equation(df, val1, startinput, endinput):
+    b2 = np.amax(val1)
+    a = generate_semimajor_axis(df)
+    e = generate_eccentricity(df)
+    h = a*e
+    b = a*np.sqrt(1-(e**2))
+    xi = np.linspace(startinput, endinput, 90000)
+    yi = np.sqrt((a**2)*(1-(((xi-h)**2)/b**2)))
+    yii = -yi
+    dat = {'x_ranges': xi, 'y_ranges': yi, 'negative_y_ranges': yii}
     dff = pd.DataFrame(dat)
     return dff
