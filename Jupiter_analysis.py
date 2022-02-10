@@ -74,6 +74,15 @@ fig3.update_layout(
 )
 #fig3.show()
 
+#check if elliptical, I will look at X-Y projection
+
+x_max = np.amin(df['X'])
+x_min = np.amax(df['X'])
+y_max = np.amin(df['Y'])
+y_min = np.amax(df["Y"])
+
+
+
 #Dash board
 
 app = dash.Dash(__name__)
@@ -83,5 +92,10 @@ app.layout = html.Div([
     dcc.Graph(id="3d_orbit", figure= fig3)
 
 ])
+
+
+
+
+
 
 app.run_server(debug=True)

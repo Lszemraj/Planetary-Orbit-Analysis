@@ -1,6 +1,9 @@
 import numpy as np
 import pandas
 import pandas as pd
+from scipy import optimize
+import matplotlib.pyplot as plt
+from scipy.fft import fft
 
 def generate_days(df: pandas.DataFrame):
     return df.assign(days=(df['date'] - df['date'].iloc[0]).dt.days.astype(np.int64))
@@ -82,3 +85,33 @@ def observer_table_to_dataframe(filename):
     # then make all of them numbers
     df[list(valid)] = df[list(valid)].astype(np.float64)
     return df
+
+# courtesy of stack overflow: https://stackoverflow.com/a/42322656
+# i understand fourier transforms bc of 3b1b but this is blasphemy at its finest
+def fit_sin(time, data):
+    time = np.array(time)
+    data = np.array(data)
+    sampling_frequencies = np.fft.fftfreq(len(time), (time[1] - time[0]))
+    Fyy = abs(np.fft.fft(data))
+    #excluding the zero frequency "peak", which is related to offset
+    guess_freq = abs(sampling_frequencies[np.argmax(Fyy[1:]) + 1])
+    guess_amp = np.std(data) * 2 ** 0.5
+    guess_offset = np.mean(data)
+    guess = np.array([guess_amp, 2 * np.pi * guess_freq, 0, guess_offset])
+    def sinfunc(t, A, w, p, c):
+        return A * np.sin(w * t + p) + c
+    popt, _ = optimize.curve_fit(sinfunc, time, data, p0=guess)
+    amp, omega, p, c = popt
+    f = omega / (2. * np.pi)
+    def fitfunc(t):
+        return amp * np.sin(omega * t + p) + c
+    return {"amp": amp, "omega": omega, "phase": p, "offset": c, "freq": f, "period": 1. / f, "fitfunc": fitfunc}
+
+def find_elliptical_equation(val1, val2):
+    b = np.amax(val1)
+    a = np.amax(val2)
+    xi = np.linspace(-b, b)
+    yi = np.sqrt((a**2)*(1-((xi**2)/b**2)))
+    dat = {'x_ranges': xi, 'y_ranges': yi}
+    dff = pd.DataFrame(dat)
+    return dff
