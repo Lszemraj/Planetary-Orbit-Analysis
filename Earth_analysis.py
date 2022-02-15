@@ -14,30 +14,27 @@ from scipy import optimize
 import matplotlib.pyplot as plt
 from scipy.fft import fft
 
+# Data Analysis for Earth
+
 planet = 'earth'
 
+# Initial Data Analysis
+...
 ephemeris("/Users/Lillie/Desktop/CL Astro/Earth_Sun_Ephemeris.txt")
-
-earth = vector_ephemeris_to_dataframe("/Users/Lillie/Desktop/CL Astro/Earth_Sun_Ephemeris.txt")
-
+earth = load_data("Earth_Sun_Ephemeris.txt")
 days = generate_days(earth)
 distance = generate_distance(days)
 velocity = generate_velocity(distance)
 e = generate_eccentricity(velocity)
-
-print("Eccentricity:", e)
-
+df = pd.DataFrame(velocity)
+#print("Eccentricity:", e)
 #data = {"Days": days, "Distance (Au)": distance, "Velocity (Au/Day)": velocity}
 
-df = pd.DataFrame(velocity)
-
-
-
-
+...
 
 
 # Velocity Time Graph
-
+...
 fig_v_t = px.scatter(df, x = df["days"], y = df["v"],
                      labels={
                          "days": "Time (Days)",
@@ -45,9 +42,10 @@ fig_v_t = px.scatter(df, x = df["days"], y = df["v"],
                      title="Earth-Sun Distance Time Graph")
 
 #fig_v_t.show()
+...
 
 #Distance Time Graph
-
+...
 fig_d_t = px.scatter(df, x = df["days"], y = df["d"],
                      labels={
                          "days": "Time (Days)",
@@ -55,6 +53,7 @@ fig_d_t = px.scatter(df, x = df["days"], y = df["d"],
                      title="Earth-Sun Distance Time Graph"
                      )
 #fig_d_t.show()
+...
 
 #3D Plot
 ecc = generate_eccentricity(df)
@@ -64,6 +63,13 @@ dict = {"X": a*ecc , 'Y': [0], 'Z':[0]} #Sun at Center
 df2 = pd.DataFrame(dict)
 fig2 = px.scatter_3d(df2, x='X', y='Y', z='Z')
 fig3 = go.Figure(data=fig.data + fig2.data)
+fig3.update_layout(
+    title="Orbit of Earth about the Sun",
+    xaxis_title="X (AU)",
+    yaxis_title="Y (AU)",
+    legend_title= "Velocity",
+)
+#fig3.show()
 
 #2d ellipse shape
 fig = go.Figure()
@@ -78,31 +84,17 @@ fig.add_trace(go.Trace(x=dat['x_ranges'], y=dat['negative_y_ranges'], name = 'Eq
 fig.update_layout(title = f'Plot of X-Y plane of orbit of {planet}', showlegend=True)
 #ellipse = go.Figure(data = fig_scatter.data + fig_line.data + fig_equation.data)
 
-
-
-
-fig3.update_layout(
-    title="Orbit of Earth about the Sun",
-    xaxis_title="X (AU)",
-    yaxis_title="Y (AU)",
-    legend_title= "Velocity",
-)
-
 #check period relationship
 
-best_fit_data = fit_sin(df['days'], df['d'])
+amp, omega, phase, offset, freq, period, fitfunc = fit_sin(distance['days'], distance['d'])
 #best_fit_dat = pd.DataFrame(data = best_fit_data)
-print(best_fit_data)
-T = best_fit_data['period'][0]
+#print(best_fit_data)
+#T = best_fit_data['period'][0]
 semi = generate_semimajor_axis(df)
-#print(f"Period of {planet}", T)
+T = period
+list = [T, semi]
 
 
-
-
-
-
-#fig3.show()
 
 #Dash board
 

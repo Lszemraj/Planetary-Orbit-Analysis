@@ -5,6 +5,11 @@ from scipy import optimize
 import matplotlib.pyplot as plt
 from scipy.fft import fft
 
+def load_data(name):
+    datadir = "/Users/Lillie/Desktop/CL Astro/"
+    x = vector_ephemeris_to_dataframe(datadir + name)
+    return x
+
 def generate_days(df: pandas.DataFrame):
     return df.assign(days=(df['date'] - df['date'].iloc[0]).dt.days.astype(np.int64))
 
@@ -105,9 +110,15 @@ def fit_sin(time, data):
     f = omega / (2. * np.pi)
     def fitfunc(t):
         return amp * np.sin(omega * t + p) + c
-    dat = {"amp": amp, "omega": omega, "phase": p, "offset": c, "freq": f, "period": 1. / f, "fitfunc": fitfunc}
-    df = pd.DataFrame(dat)
-    return df
+    #dat = {"amp": amp, "omega": omega, "phase": p, "offset": c, "freq": f, "period": 1. / f, "fitfunc": fitfunc}
+    amp = amp
+    omega = omega
+    phase = p
+    offset = c
+    freq = f
+    period = 1./f
+    fitfunc = fitfunc
+    return amp, omega, phase, offset, freq, period, fitfunc
 
 def find_elliptical_equation(df, val1, startinput, endinput):
     b2 = np.amax(val1)
