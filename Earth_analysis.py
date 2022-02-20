@@ -16,7 +16,7 @@ from scipy.fft import fft
 
 # Data Analysis for Earth
 
-planet = 'earth'
+planet = 'Earth'
 
 # Initial Data Analysis
 ...
@@ -40,7 +40,8 @@ fig_v_t = px.scatter(df, x = df["days"], y = df["v"],
                          "days": "Time (Days)",
                          "v": "Velocity (AU/day)" },
                      title="Earth-Sun Distance Time Graph")
-
+fig_v_t.update_layout(autosize = False,
+                  width = 1200, height = 800)
 #fig_v_t.show()
 ...
 
@@ -52,10 +53,13 @@ fig_d_t = px.scatter(df, x = df["days"], y = df["d"],
                          "d": "Distance (AU)" },
                      title="Earth-Sun Distance Time Graph"
                      )
+fig_d_t.update_layout(autosize = False,
+                  width = 1200, height = 800)
 #fig_d_t.show()
 ...
 
 #3D Plot
+...
 ecc = generate_eccentricity(df)
 a = generate_semimajor_axis(df)
 fig = px.scatter_3d(df, x='X', y='Y', z='Z', color = 'v' )
@@ -70,8 +74,10 @@ fig3.update_layout(
     legend_title= "Velocity",
 )
 #fig3.show()
+...
 
 #2d ellipse shape
+...
 fig = go.Figure()
 fig.add_trace(go.Scatter(x = df['X'], y= df['Y'], mode = 'markers', name = 'Scatter Points'))
 fig.add_trace(go.Trace(x=df['X'], y=df['Y'], name = 'Line of Best Fit'))
@@ -81,11 +87,12 @@ fig.add_trace(go.Scatter(x = df2['X'], y= df2['Y'], name = 'Sun', mode = 'marker
 dat = find_elliptical_equation(df, df['X'], -160000000, 153000000)
 fig.add_trace(go.Trace(x=dat['x_ranges'], y=dat['y_ranges'], name = 'Equation of Ellipse'))
 fig.add_trace(go.Trace(x=dat['x_ranges'], y=dat['negative_y_ranges'], name = 'Equation of Ellipse Negative Side'))
-fig.update_layout(title = f'Plot of X-Y plane of orbit of {planet}', showlegend=True)
+fig.update_layout(title = f'Plot of X-Y Plane of Orbit of {planet}', showlegend=True, autosize = False,
+                  width = 1000, height = 800, yaxis_title = 'Y', xaxis_title = 'X')
 #ellipse = go.Figure(data = fig_scatter.data + fig_line.data + fig_equation.data)
-
+...
 #check period relationship
-
+...
 amp, omega, phase, offset, freq, period, fitfunc = fit_sin(distance['days'], distance['d'])
 #best_fit_dat = pd.DataFrame(data = best_fit_data)
 #print(best_fit_data)
@@ -93,7 +100,7 @@ amp, omega, phase, offset, freq, period, fitfunc = fit_sin(distance['days'], dis
 semi = generate_semimajor_axis(df)
 T = period
 list = [T, semi]
-
+...
 
 
 #Dash board

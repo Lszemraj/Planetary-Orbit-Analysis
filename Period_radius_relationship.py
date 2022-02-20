@@ -22,10 +22,12 @@ list_of_file_names = ["Earth_Sun_Ephemeris.txt", "jupiter_final2.txt", "mars_fin
                       "neptune_final.txt", "saturn_final2.txt", "uranus_final.txt", "venus_final.txt"]
 
 periods = []
+p = {}
 semis = []
 ln_periods = []
 ln_semis = []
-
+ecc = {}
+se = {}
 
 for i in list_of_file_names:
     planet_data = load_data(i)
@@ -33,12 +35,19 @@ for i in list_of_file_names:
     distance = generate_distance(days)
     amp, omega, phase, offset, freq, period, fitfunc = fit_sin(distance['days'], distance['d'])
     semi = generate_semimajor_axis(distance)
+    e = generate_eccentricity(distance)
     T = period
     periods.append(T)
     semis.append(semi)
+    ecc[f'{i}'] = e
+    p[f'{i}'] = T
+    se[f'{i}'] = semi
     ln_periods.append(np.log(T))
     ln_semis.append(np.log(semi))
 
+print("eccentricity", ecc)
+print("periods", p)
+print("semis", se)
 data = {"Periods of Planets": periods, "Semimajor Axis of Planets": semis, "ln_t": ln_periods, "ln_s": ln_semis}
 df = pd.DataFrame(data)
 
@@ -61,11 +70,17 @@ fig2.add_trace(go.Trace(x= np.log(df['Periods of Planets']), y= np.log(df['Semim
 
 fig.update_layout(title = "Period (T) Squared verses Semimajor Axis Cubed",
                   xaxis_title = 'T^2',
-                  yaxis_title = '(Semimajor Axis)^3')
+                  yaxis_title = '(Semimajor Axis)^3',
+                  autosize=False,
+                  width=1200, height=800
+                  )
 fig2.update_layout(title = "log Period (T)  verses log Semimajor Axis, slope demonstrates relationship to linearize",
                    xaxis_title = 'log(T)',
                    yaxis_title = 'log(semimajor axis)',
-                   showlegend = True)
+                   showlegend = True,
+                   autosize=False,
+                   width=1200, height=800
+                   )
 ...
 
 # Dash App
